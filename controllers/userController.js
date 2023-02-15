@@ -10,6 +10,14 @@ module.exports = {
   //gets a single user
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
+      .populate({
+        path: "thoughts",
+        select: "-__v",
+      })
+      .populate({
+        path: "friends",
+        select: "-__v",
+      })
       .select('-__v')
       .then((user) =>
         !user
@@ -36,6 +44,19 @@ module.exports = {
             : Thought.deleteMany({ _id: { $in: user.thoughts } })
         )
         .then(() => res.json({ message: 'User and thoughts deleted!' }))
+        .catch((err) => res.status(500).json(err));
+    },
+    //updates a user
+    updateUser({ params, body }, res) {
+      User.findOneAndUpdate({ _id: params.id }, body, {
+        new: true,
+        runValidators: true,
+      })
+        .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user with that ID' })
+          : res.json(user)
+      )
         .catch((err) => res.status(500).json(err));
     },
 }
