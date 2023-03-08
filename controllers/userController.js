@@ -48,7 +48,7 @@ module.exports = {
     },
     //updates a user
   updateUser({ params, body }, res) {
-    User.findOneAndUpdate({ _id: params.id }, body, {
+    User.findOneAndUpdate({ _id: params.userId }, body, {
       new: true,
       runValidators: true,
     })
